@@ -169,8 +169,8 @@ const PrixImmobilierRueilMalmaison = () => {
             (environ <strong>51&nbsp;%</strong> de propriétaires vs <strong>46&nbsp;%</strong> de locataires).
           </p>
           <ul className="list-disc pl-6 text-gray-800">
-            <li><strong>Prix moyen des appartements :</strong> <strong>5 471&nbsp;€/m²</strong></li>
-            <li><strong>Prix moyen des maisons :</strong> <strong>8 209&nbsp;€/m²</strong></li>
+            <li><strong>Prix moyen des appartements :</strong> <strong>5 616&nbsp;€/m²</strong></li>
+            <li><strong>Prix moyen des maisons :</strong> <strong>6 652&nbsp;€/m²</strong></li>
           </ul>
 
           {/* Évolution 10 ans */}
