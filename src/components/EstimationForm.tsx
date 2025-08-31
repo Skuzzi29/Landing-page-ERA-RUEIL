@@ -31,7 +31,15 @@ const EstimationForm = () => {
 
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        setErrorMessage('Réponse inattendue du serveur.');
+        const text = (await response.text()).trim();
+        const message =
+          text ||
+          (response.status === 404
+            ? 'Endpoint introuvable'
+            : response.status
+              ? `Erreur ${response.status}`
+              : '');
+        setErrorMessage(message || 'Une erreur est survenue. Veuillez réessayer.');
         setStatus('error');
         return;
       }
@@ -48,17 +56,20 @@ const EstimationForm = () => {
       if (response.ok) {
         setStatus('success');
       } else {
-        if (response.status === 404) {
-          setErrorMessage('Endpoint introuvable');
-        } else if (body && (body.error || body.message)) {
-          setErrorMessage(body.error || body.message);
-        } else {
-          setErrorMessage('Une erreur est survenue. Veuillez réessayer.');
-        }
+        const message =
+          body.error ||
+          body.message ||
+          (response.status === 404
+            ? 'Endpoint introuvable'
+            : response.status
+              ? `Erreur ${response.status}`
+              : '');
+        setErrorMessage(message || 'Une erreur est survenue. Veuillez réessayer.');
         setStatus('error');
       }
-    } catch {
-      setErrorMessage('Une erreur est survenue. Veuillez réessayer.');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '';
+      setErrorMessage(message || 'Une erreur est survenue. Veuillez réessayer.');
       setStatus('error');
     }
   };
