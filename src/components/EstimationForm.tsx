@@ -24,17 +24,37 @@ const EstimationForm = () => {
       const response = await fetch('/api/estimation', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
-      const body = await response.json();
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        setErrorMessage('Réponse inattendue du serveur.');
+        setStatus('error');
+        return;
+      }
+
+      let body: { error?: string; message?: string };
+      try {
+        body = await response.json();
+      } catch {
+        setErrorMessage('Contenu JSON invalide renvoyé par le serveur.');
+        setStatus('error');
+        return;
+      }
 
       if (response.ok) {
         setStatus('success');
       } else {
-        setErrorMessage(body.error);
+        if (response.status === 404) {
+          setErrorMessage('Endpoint introuvable');
+        } else if (body && (body.error || body.message)) {
+          setErrorMessage(body.error || body.message);
+        } else {
+          setErrorMessage('Une erreur est survenue. Veuillez réessayer.');
+        }
         setStatus('error');
       }
     } catch {
@@ -48,16 +68,12 @@ const EstimationForm = () => {
   ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   return (
-    <section
-      id="estimation"
-      className="py-24 bg-gray-50"
-      aria-labelledby="estimation-title"
-    >
+    <section id="estimation" className="py-24 bg-gray-50" aria-labelledby="estimation-title">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="text-center max-w-3xl mx-auto mb-12">
           <h2
@@ -67,33 +83,30 @@ const EstimationForm = () => {
             <strong>Obtenez votre estimation gratuite à Rueil-Malmaison</strong>
           </h2>
           <p className="text-lg sm:text-xl text-gray-600 font-light leading-relaxed">
-            Vous avez un projet de vente à <strong>Rueil-Malmaison</strong> ou souhaitez connaître la <strong>valeur réelle de votre bien</strong> ?
-            Nous vous proposons une <strong>estimation précise, gratuite et sans engagement</strong>, réalisée par un <strong>professionnel du marché local</strong>.
-            Que vous soyez propriétaire d’une maison à <strong>Plaine Gare</strong>, d’un appartement au <strong>Plateau</strong> ou d’un bien dans un autre quartier,
-            nous vous accompagnons pas à pas pour préparer votre vente.
+            Vous avez un projet de vente à <strong>Rueil-Malmaison</strong> ou souhaitez connaître la{' '}
+            <strong>valeur réelle de votre bien</strong>? Nous vous proposons une{' '}
+            <strong>estimation précise, gratuite et sans engagement</strong>, réalisée par un{' '}
+            <strong>professionnel du marché local</strong>. Que vous soyez propriétaire d’une maison
+            à <strong>Plaine Gare</strong>, d’un appartement au <strong>Plateau</strong> ou d’un bien
+            dans un autre quartier, nous vous accompagnons pas à pas pour préparer votre vente.
           </p>
         </header>
 
         {/* Bloc formulaire avec bandeau rouge collé */}
-         <div
+        <div
           id="estimation-form"
           className="bg-white shadow-xl border border-gray-200 rounded-lg overflow-hidden scroll-mt-20"
         >
           {/* Bandeau rouge en haut */}
           <div className="bg-red-600 text-white text-center py-4">
-            <h3 className="text-xl sm:text-2xl font-medium">
-              Formulaire d'estimation
-            </h3>
+            <h3 className="text-xl sm:text-2xl font-medium">Formulaire d'estimation</h3>
           </div>
 
           {/* Formulaire */}
           <form onSubmit={handleSubmit} className="p-8 sm:p-12 space-y-8">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label
-                  htmlFor="propertyType"
-                  className="block text-gray-900 text-base font-medium mb-3"
-                >
+                <label htmlFor="propertyType" className="block text-gray-900 text-base font-medium mb-3">
                   Type de bien <span className="text-red-600">*</span>
                 </label>
                 <select
@@ -111,10 +124,7 @@ const EstimationForm = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="rooms"
-                  className="block text-gray-900 text-base font-medium mb-3"
-                >
+                <label htmlFor="rooms" className="block text-gray-900 text-base font-medium mb-3">
                   Nombre de pièces <span className="text-red-600">*</span>
                 </label>
                 <select
@@ -136,10 +146,7 @@ const EstimationForm = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="address"
-                className="block text-gray-900 text-base font-medium mb-3"
-              >
+              <label htmlFor="address" className="block text-gray-900 text-base font-medium mb-3">
                 Adresse du bien à Rueil-Malmaison <span className="text-red-600">*</span>
               </label>
               <input
@@ -156,10 +163,7 @@ const EstimationForm = () => {
 
             <div className="grid md:grid-cols-3 gap-6">
               <div>
-                <label
-                  htmlFor="surface"
-                  className="block text-gray-900 text-base font-medium mb-3"
-                >
+                <label htmlFor="surface" className="block text-gray-900 text-base font-medium mb-3">
                   Surface (m²) <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -175,10 +179,7 @@ const EstimationForm = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="floor"
-                  className="block text-gray-900 text-base font-medium mb-3"
-                >
+                <label htmlFor="floor" className="block text-gray-900 text-base font-medium mb-3">
                   Étage (si appartement)
                 </label>
                 <input
@@ -195,10 +196,7 @@ const EstimationForm = () => {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-gray-900 text-base font-medium mb-3"
-                >
+                <label htmlFor="firstName" className="block text-gray-900 text-base font-medium mb-3">
                   Prénom <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -213,10 +211,7 @@ const EstimationForm = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-gray-900 text-base font-medium mb-3"
-                >
+                <label htmlFor="lastName" className="block text-gray-900 text-base font-medium mb-3">
                   Nom <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -233,10 +228,7 @@ const EstimationForm = () => {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-gray-900 text-base font-medium mb-3"
-                >
+                <label htmlFor="phone" className="block text-gray-900 text-base font-medium mb-3">
                   Téléphone <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -252,10 +244,7 @@ const EstimationForm = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-gray-900 text-base font-medium mb-3"
-                >
+                <label htmlFor="email" className="block text-gray-900 text-base font-medium mb-3">
                   Email <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -272,10 +261,7 @@ const EstimationForm = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="message"
-                className="block text-gray-900 text-base font-medium mb-3"
-              >
+              <label htmlFor="message" className="block text-gray-900 text-base font-medium mb-3">
                 Message libre
               </label>
               <textarea
