@@ -15,10 +15,11 @@ const EstimationForm = () => {
   });
 
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const response = await fetch('/api/estimation', {
         method: 'POST',
@@ -28,12 +29,16 @@ const EstimationForm = () => {
         body: JSON.stringify(formData)
       });
 
+      const body = await response.json();
+
       if (response.ok) {
         setStatus('success');
       } else {
+        setErrorMessage(body.error);
         setStatus('error');
       }
     } catch {
+      setErrorMessage('Une erreur est survenue. Veuillez réessayer.');
       setStatus('error');
     }
   };
@@ -62,9 +67,9 @@ const EstimationForm = () => {
             <strong>Obtenez votre estimation gratuite à Rueil-Malmaison</strong>
           </h2>
           <p className="text-lg sm:text-xl text-gray-600 font-light leading-relaxed">
-            Vous avez un projet de vente à <strong>Rueil-Malmaison</strong> ou souhaitez connaître la <strong>valeur réelle de votre bien</strong> ? 
-            Nous vous proposons une <strong>estimation précise, gratuite et sans engagement</strong>, réalisée par un <strong>professionnel du marché local</strong>. 
-            Que vous soyez propriétaire d’une maison à <strong>Plaine Gare</strong>, d’un appartement au <strong>Plateau</strong> ou d’un bien dans un autre quartier, 
+            Vous avez un projet de vente à <strong>Rueil-Malmaison</strong> ou souhaitez connaître la <strong>valeur réelle de votre bien</strong> ?
+            Nous vous proposons une <strong>estimation précise, gratuite et sans engagement</strong>, réalisée par un <strong>professionnel du marché local</strong>.
+            Que vous soyez propriétaire d’une maison à <strong>Plaine Gare</strong>, d’un appartement au <strong>Plateau</strong> ou d’un bien dans un autre quartier,
             nous vous accompagnons pas à pas pour préparer votre vente.
           </p>
         </header>
@@ -304,12 +309,12 @@ const EstimationForm = () => {
                 Obtenir mon estimation gratuite
               </button>
             </div>
-            
+
             {status === 'success' && (
               <p className="text-green-600 text-center">Votre demande a été envoyée avec succès.</p>
             )}
             {status === 'error' && (
-              <p className="text-red-600 text-center">Une erreur est survenue. Veuillez réessayer.</p>
+              <p className="text-red-600 text-center">{errorMessage}</p>
             )}
           </form>
         </div>
