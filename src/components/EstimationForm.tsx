@@ -21,7 +21,7 @@ const EstimationForm = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/estimations', {   // ✅ correction : "estimations" (pluriel)
+      const response = await fetch('/api/estimation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,12 +92,12 @@ const EstimationForm = () => {
           </p>
         </header>
 
-        {/* Bloc formulaire */}
+        {/* Bloc formulaire avec bandeau rouge collé */}
         <div
           id="estimation-form"
           className="bg-white shadow-xl border border-gray-200 rounded-lg overflow-hidden scroll-mt-20"
         >
-          {/* Bandeau rouge */}
+          {/* Bandeau rouge en haut */}
           <div className="bg-red-600 text-white text-center py-4">
             <h3 className="text-xl sm:text-2xl font-medium">Formulaire d'estimation</h3>
           </div>
