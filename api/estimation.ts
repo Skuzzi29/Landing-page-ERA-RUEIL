@@ -17,7 +17,7 @@ export default async function handler(
   res: EstimationResponse
 ) {
   const allowHeaders = 'Content-Type';
-  the allowMethods = 'POST,OPTIONS';
+  const allowMethods = 'POST,OPTIONS';
   const allowOrigin = '*';
 
   if (req.method === 'OPTIONS') {
