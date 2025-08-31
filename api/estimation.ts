@@ -1,72 +1,70 @@
+// pages/api/estimations.ts
+import type { NextApiRequest, NextApiResponse } from 'next';
 import nodemailer from 'nodemailer';
 
-interface EstimationRequest {
-  method?: string;
-  body?: Record<string, unknown>;
-}
-
-interface EstimationResponse {
-  status: (code: number) => EstimationResponse;
-  json: (body: unknown) => void;
-  setHeader: (name: string, value: string) => void;
-  end: (body?: unknown) => void;
-}
-
-export default async function handler(
-  req: EstimationRequest,
-  res: EstimationResponse
-) {
-  const allowHeaders = 'Content-Type';
-  const allowMethods = 'POST,OPTIONS';
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // CORS (au cas où)
   const allowOrigin = '*';
+  const allowMethods = 'POST,OPTIONS';
+  const allowHeaders = 'Content-Type';
 
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', allowOrigin);
     res.setHeader('Access-Control-Allow-Methods', allowMethods);
     res.setHeader('Access-Control-Allow-Headers', allowHeaders);
-    res.status(200).end();
-    return;
+    return res.status(200).end();
   }
 
   if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   res.setHeader('Access-Control-Allow-Origin', allowOrigin);
   res.setHeader('Access-Control-Allow-Methods', allowMethods);
   res.setHeader('Access-Control-Allow-Headers', allowHeaders);
 
-  const data = req.body ?? {};
+  // Corps de la requête
+  const data = typeof req.body === 'string' ? safeParse(req.body) : req.body || {};
 
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
+  const {
+    SMTP_HOST = 'mails.optimails.com',
+    SMTP_PORT = '465',
+    SMTP_USER,
+    SMTP_PASS,
+    SMTP_FROM,
+    SMTP_TO,
+  } = process.env;
 
-  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
-    res.status(500).json({ error: 'SMTP config missing' });
-    return;
+  if (!SMTP_USER || !SMTP_PASS) {
+    return res.status(500).json({ error: 'SMTP config missing' });
   }
 
   const transporter = nodemailer.createTransport({
     host: SMTP_HOST,
-    port: Number(SMTP_PORT || 587),
-    secure: SMTP_PORT === '465',
-    auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS
-    }
+    port: Number(SMTP_PORT),
+    secure: SMTP_PORT === '465', // 465 = SSL
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
   });
 
   try {
     await transporter.sendMail({
-      from: process.env.SMTP_FROM || process.env.SMTP_USER,
-      to: process.env.SMTP_TO || process.env.SMTP_USER,
+      from: SMTP_FROM || SMTP_USER,
+      to: SMTP_TO || SMTP_USER, // destinataire
       subject: "Nouvelle demande d'estimation",
-      text: JSON.stringify(data, null, 2)
+      text: JSON.stringify(data, null, 2),
     });
 
-    res.status(200).json({ message: 'Demande envoyée' });
+    return res.status(200).json({ message: 'Demande envoyée' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erreur lors de l'envoi de la demande" });
+    console.error('SMTP error:', err);
+    return res.status(500).json({ error: "Erreur lors de l'envoi de la demande" });
+  }
+}
+
+function safeParse(s: string) {
+  try {
+    return JSON.parse(s);
+  } catch {
+    return {};
   }
 }
