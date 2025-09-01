@@ -283,7 +283,7 @@ const EstimationForm = () => {
               </div>
               <div className="flex items-center space-x-2 text-sm text-green-700">
                 <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>
-                <span>Données confidentielles. Aucune obligation de vente.</span>
+                <span>Données confidentielles</span>
               </div>
             </div>
 
