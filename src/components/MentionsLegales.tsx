@@ -68,7 +68,6 @@ const MentionsLegales = () => (
             <br />
             TVA intracommunautaire : FR63983447418
             <br />
-            Directeur de la publication : [Nom à compléter]
           </p>
         </div>
 
@@ -90,9 +89,9 @@ const MentionsLegales = () => (
           <p>
             Site hébergé par : OVH
             <br />
-            [Adresse fictive à remplacer par l’adresse officielle d’OVH]
+            Siège social : 2 rue Kellermann – 59100 Roubaix – France
             <br />
-            [Téléphone OVH]
+            Contact: ovh.com/fr/support
           </p>
         </div>
       </section>
