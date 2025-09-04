@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://estimation-rueil-malmaison.fr/sitemap.xml
