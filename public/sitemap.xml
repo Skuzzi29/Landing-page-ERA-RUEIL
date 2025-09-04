@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://estimation-rueil-malmaison.fr/</loc>
-  </url>
-  <url>
-    <loc>https://estimation-rueil-malmaison.fr/prix-immobilier-rueil-malmaison</loc>
-  </url>
-  <url>
-    <loc>https://estimation-rueil-malmaison.fr/guide-vendeur-rueil-malmaison</loc>
-  </url>
-  <url>
-    <loc>https://estimation-rueil-malmaison.fr/mentions-legales</loc>
-  </url>
-  <url>
-    <loc>https://estimation-rueil-malmaison.fr/politique-de-confidentialite</loc>
-  </url>
-  <url>
-    <loc>https://estimation-rueil-malmaison.fr/plan-du-site</loc>
-  </url>
+  <url><loc>https://www.estimation-rueil-malmaison.fr/</loc></url>
+  <url><loc>https://www.estimation-rueil-malmaison.fr/prix-immobilier-rueil-malmaison</loc></url>
+  <url><loc>https://www.estimation-rueil-malmaison.fr/guide-vendeur-rueil-malmaison</loc></url>
+  <url><loc>https://www.estimation-rueil-malmaison.fr/mentions-legales</loc></url>
+  <url><loc>https://www.estimation-rueil-malmaison.fr/politique-de-confidentialite</loc></url>
+  <url><loc>https://www.estimation-rueil-malmaison.fr/plan-du-site</loc></url>
 </urlset>
